@@ -7485,6 +7485,8 @@ button:disabled {
   align-items: center;
 }
 .ok-site-header .ok-site-logo img {
-	width: 200px;
+  height: auto;
+}
+.ok-foot-logo > a > img{
   height: auto;
 }
