@@ -1,0 +1,554 @@
+/* okcalendar.css */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&family=Khand:wght@300;400;500;600;700&family=Mukta:wght@300;400;500;600;700;800&display=swap");
+
+body.ok-popup-open{
+  overflow: hidden;
+}
+.ok-eng-font {
+  font-family: "Inter", sans-serif;
+}
+.ok-title {
+	font-size: 21px;
+	font-weight: 600;
+	line-height: 18px;
+	margin: 0;
+	color: #000;
+}
+.ok-no-data {
+	font-size: 18px;
+  color: #fa3a2e;
+  margin-top: 15px;
+}
+.ok-flex {
+  gap: 5px;
+  display: flex;
+}
+.ok-flex-m {
+  align-items: center;
+}
+.ok-calendar {
+  font-family: "Mukta", sans-serif;
+  font-weight: 600;
+  color: #4e4e4e;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+.ok-calendar a,
+.ok-calendar a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+.ok-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+.ok-error {
+  padding: 20px;
+  width: max-content;
+  text-align: center;
+}
+.ok-error-title {
+  color: #fa3a2e;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* Ok Calendar Day Starts */
+.ok-day {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 65px 1fr;
+  width: max-content;
+  gap: 15px;
+  padding: 30px;
+}
+.ok-day-circle {
+  height: 65px;
+  width: 65px;
+  min-width: 65px;
+  border-radius: 50%;
+  background: linear-gradient(118deg, #1d63ed 9.69%, #aa1ded 145.12%);
+  text-align: center;
+  line-height: 65px;
+  font-size: 33px;
+  color: #fff;
+}
+.ok-day-date{
+	margin-bottom: 5px;
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 26px;
+	color: #1a1642;
+}
+.ok-badge {
+	display: inline-block;
+	vertical-align: top;
+	font-family: "Mukta", sans-serif;
+	background-color: rgba(26, 22, 66, 0.08);
+	padding: 0 15px;
+	border-radius: 48px;
+	color: #4e4e4e;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 28px;
+	letter-spacing: 0em;
+}
+.ok-badge.ok-eng-font {
+	font-size: 12px;
+	font-weight: bold;
+}
+.ok-day-info > div:first-child span:first-child {
+	margin-left: 10px;
+}
+
+.ok-day-info > div:first-child small {
+	font-size: 14px;
+}
+
+.ok-day-site-info {
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 26px;
+	color: #1a1642;
+}
+.ok-day-sunrise{
+	font-size: 13px;
+	color: rgba(59, 56, 94, 0.8);
+	font-weight: 500;
+	margin-left: 10px;
+}
+.ok-day-current {
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 18px;
+	color: #2f76ff;
+	margin-right: 8px;
+	margin-left: 8px;
+}
+/* Ok Calendar Day Ends */
+
+/* Ok Calendar Day Small Starts */
+.ok-day-sm {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 45px 1fr;
+  width: max-content;
+}
+
+.ok-day-sm-date {
+  height: 45px;
+  width: 45px;
+  border-radius: 4px;
+  text-align: center;
+  background-color: rgba(26, 22, 66, 0.05);
+  margin-right: 10px;
+  font-size: 16px;
+  line-height: 0.9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ok-day-sm-date > span {
+  font-size: 11px;
+  display: block;
+  line-height: 16px;
+}
+
+.ok-day-sm-info {
+  font-size: 15px;
+  flex: 2;
+  margin-left: 10px;
+  color: inherit;
+}
+.ok-day-sm-info p {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 2px;
+}
+.ok-day-sm-info .ok-day-sm-tithi {
+  font-size: 13px;
+  font-weight: 700;
+}
+.ok-day-sm-flex {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.ok-day-sm-flex span {
+  color: #4e4e4e;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ok-day-sm-flex span.ok-eng-font {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.ok-day-sm-flex span {
+  color: #4e4e4e;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ok-day-sm-event {
+  display: inline-block;
+  background-color: #f1f1f1;
+  color: inherit;
+  line-height: 18px;
+  padding: 0 6px;
+  border-right: 4px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Ok Calendar Day Small Ends */
+
+/* Ok Calendar Month Small Starts */
+.ok-month-sm-header{
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+.ok-month-sm-selected{
+text-align: center;
+padding: 10px 10px 15px;
+}
+.ok-month-sm-selected span{
+  display: block;
+  color: #2E75FF;
+  font-size: 18px;
+  font-weight: bold;
+}
+.ok-month-sm-selected span.ok-eng-font{
+  color: #1A1642;
+  font-size: 14px;
+  margin-top: 5px;
+}
+.ok-month-jump-between {
+	margin: 0 10px;
+	display: inline-block;
+	background: #ededf0;
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+  cursor: pointer;
+}
+.ok-month-jump-between:hover {
+	background: #106ece;
+}
+.ok-month-jump-between svg {
+	color: #324c7e;
+	font-size: 25px;
+}
+.ok-month-jump-between:hover svg {
+	color: #fff;
+}
+.ok-month-sm-body{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.ok-month-sm-days{
+font-size: 14px;
+font-weight: 700;
+color: #1A1642AD;
+text-align: center;
+padding: 7px;
+}
+.ok-month-sm-col{
+font-size: 18px;
+font-weight: 700;
+color: #1A1642;
+text-align: center;
+  padding: 16px 10px;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+}
+.ok-month-sm-col:hover {
+	background: #ededf0;
+}
+.ok-month-sm-col span.ok-eng-font{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 6px 5px;
+  font-size: 9px;
+  font-weight: 600;
+}
+.ok-month-sm-event{
+  position: absolute;
+  top: 7px;
+  right: 5px;
+  background: #2E75FF;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.ok-month-today{
+  background: #2E75FF !important;
+  color: #fff;
+}
+
+.ok-month-holiday{
+  color: #FF6B6B;
+}
+.ok-month-holiday .ok-month-sm-event{
+  background: #FF6B6B;
+}
+.ok-month-today-holiday{
+  background: #fd2929 !important;
+  color: #fff;
+}
+
+.ok-month-today .ok-month-sm-event,
+.ok-month-today-holiday .ok-month-sm-event{
+  background: #FFFFFFAB;
+}
+.ok-disabled-month{
+  pointer-events: none;
+  color: rgba(0,0,0,.18);
+}
+
+.ok-month-popup{
+    display: grid;
+    grid-template-columns: 55px 1fr;
+    gap: 15px;
+
+}
+.ok-month-popup .ok-day-circle{
+  height: 55px;
+  width: 55px;
+  min-width: 55px;
+  line-height: 55px;
+  font-size: 28px;
+}
+.ok-month-info .ok-badge{
+  margin-top: 10px;
+}
+.ok-month-event {
+	padding: 20px 0;
+	border-top: 1px solid #e9e9e9;
+	border-bottom: 1px solid #e9e9e9;
+  margin-top: 25px;
+}
+.ok-month-event-list ul {
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+.ok-month-event-list {
+	margin-top: 5px;
+}
+.ok-month-event-list ul li {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 16px;
+	color: #1a1642ad;
+	position: relative;
+	padding-left: 16px;
+}
+.ok-month-event-list ul li:not(:last-child) {
+	margin-bottom: 10px;
+}
+.ok-month-event-list ul li::before {
+	content: "";
+	background: #bcbcbcfc;
+	width: 8px;
+	height: 8px;
+	left: 0;
+	border-radius: 50%;
+	top: 50%;
+	transform: translateY(-50%);
+	position: absolute;
+}
+
+.ok-month-event .ok-title{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ok-month-event.ok-event-holiday .ok-badge{
+	background: #fd292912;
+	color: #fd2929e5;
+}
+.ok-month-event.ok-event-holiday .ok-month-event-list ul li {
+	color: #fd2929;
+}
+.ok-month-event.ok-event-holiday .ok-month-event-list ul li::before {
+	background: #ff6b6b;
+}
+.ok-month-panchanga{
+  padding-top: 20px;
+}
+.ok-month-panchanga-list{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 1px solid #e9e9e9;
+    margin-top: 20px;
+
+}
+.ok-month-panchanga-list .ok-wrapper {
+	display: flex;
+	justify-content: space-between;
+	border-bottom: 1px solid #e9e9e9;
+	padding: 15px;
+	gap: 10px;
+}
+.ok-month-panchanga-list .ok-wrapper:nth-of-type(2n+1) {
+	border-right: 1px solid #e9e9e9;
+	padding-left: 0;
+}
+.ok-month-panchanga-list .ok-wrapper > div:first-child {
+	font-size: 14px;
+	font-weight: 700;
+	color: #1a1642ad;
+}
+.ok-month-panchanga-list .ok-wrapper div:last-child {
+	font-size: 14px;
+	font-weight: 500;
+	color: #1a16427a;
+	text-align: right;
+}
+.ok-month-panchanga-list .ok-wrapper div:last-child.ok-eng-font {
+	font-size: 12px;
+}
+/* Ok Calendar Month Small Ends */
+
+
+/* Ok Calendar Custom Popup Ends */
+.ok-custom__popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  visibility: hidden;
+  z-index: 1000;
+  transition: none;
+  font-family: "Mukta", sans-serif;
+}
+.ok-custom__popup .ok-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+.ok-custom__popup .ok-custom__popup__model {
+  height: 460px;
+  overflow-y: auto;
+  width: 90%;
+  max-width: 700px;
+  background: #f5f5f5;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  border-radius: 5px;
+  transition: none;
+}
+.ok-custom__popup .ok-custom__popup__model .ok-custom__popup__head {
+  background-image: linear-gradient(118deg, #1d63ed 9.69%, #aa1ded 145.12%);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  position: sticky;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+.ok-custom__popup .ok-custom__popup__model .ok-custom__popup__head h2 {
+  font-size: 20px;
+}
+.ok-custom__popup .ok-custom__popup__model .ok-custom__popup__content {
+  padding: 20px;
+}
+
+.ok-custom__popup .ok-custom__popup__model .ok-close__popup {
+  padding: 5px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  cursor: pointer;
+}
+.ok-custom__popup .ok-custom__popup__model .ok-close__popup:hover {
+  opacity: 0.8;
+}
+
+.ok-custom__popup.popup__small .ok-custom__popup__model {
+  max-width: 500px;
+  min-height: -moz-max-content;
+  min-height: max-content;
+  height: -moz-max-content;
+  height: max-content;
+}
+.ok-custom__popup.popup__big .ok-custom__popup__model {
+  min-height: 90vh;
+  height: 90vh;
+}
+.ok-custom__popup.popup__top .ok-custom__popup__model {
+  top: 0;
+}
+
+.ok-custom__popup.active {
+  opacity: 1;
+  visibility: visible;
+  animation: popup 0.3s linear;
+  -webkit-animation: popup 0.3s linear;
+}
+.ok-custom__popup.active .ok-custom__popup__model {
+  animation: popupContent 0.3s linear;
+  -webkit-animation: popupContent 0.3s linear;
+}
+.ok-custom__popup.active .ok-custom__popup__model label {
+  margin-bottom: 5px;
+  display: block;
+}
+.ok-custom__popup.active.popup__top .ok-custom__popup__model {
+  top: 30px;
+  transform: translate(-50%, 0);
+}
+
+@keyframes popup {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+@keyframes popupContent {
+  0% {
+    top: 40%;
+    opacity: 0;
+    visibility: hidden;
+  }
+  100% {
+    top: 50%;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+/* Ok Calendar Custom Popup Ends */
