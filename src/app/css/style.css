@@ -7478,3 +7478,7 @@ button:disabled {
     margin-top: 3px;
   }
 }/*# sourceMappingURL=style.css.map */
+
+.ok-main{
+  min-height: 100vh;
+}
