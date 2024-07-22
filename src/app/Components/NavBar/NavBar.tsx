@@ -74,7 +74,7 @@ const NavBar = ({ currentdate }) => {
       if (!document.getElementById(scriptId)) {
         const script = document.createElement('script');
         script.id = scriptId;
-        script.src = './okcalendar@1.0.0/dist/okcalendar.min.js';
+        script.src = './dist/okcalendar.min.js';
         script.async = true;
         document.body.appendChild(script);
       }
@@ -84,7 +84,7 @@ const NavBar = ({ currentdate }) => {
         const link = document.createElement('link');
         link.id = cssId;
         link.rel = 'stylesheet';
-        link.href = './okcalendar@1.0.0/dist/okcalendar.min.css';
+        link.href = './dist/okcalendar.min.css';
         document.head.appendChild(link);
       }
     };

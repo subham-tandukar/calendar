@@ -4,6 +4,8 @@ import NavBar from "./Components/NavBar/NavBar";
 import Footer from "./Components/Footer/Footer";
 import { RootContextProvider } from "../context";
 import { AuthContextProvider } from "../context/AuthContext";
+import { Suspense } from "react";
+import Head from "next/head";
 import "./css/style.css";
 
 const siteSettingList = async () => {

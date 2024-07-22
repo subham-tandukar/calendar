@@ -12,16 +12,11 @@ module.exports = {
   mode: process.env.NODE_ENV, // or 'development'
   entry: './public/ok-widgets/index.js',
   output: {
-    path: path.resolve(__dirname, 'public/okcalendar@1.0.0/dist'),
+    path: path.resolve(__dirname, 'public/dist'),
     filename: 'okcalendar.min.js',
   },
-  
   module: {
     rules: [
-      {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
-      },
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -32,9 +27,30 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
     ],
   },
-
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin({
+      terserOptions: {
+        compress: {
+          drop_console: true,
+        },
+      },
+    }),
+    new CssMinimizerPlugin(),
+  ],
+  },
+  devServer: {
+    static: {
+      directory: path.resolve(__dirname, 'public/okcalendar@1.0.0/dist'),
+    },
+    compress: true,
+  },
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'okcalendar.min.css',
@@ -43,23 +59,4 @@ module.exports = {
       'process.env': JSON.stringify(process.env),
     }),
   ],
-
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          compress: true,
-        },
-      }),
-      new CssMinimizerPlugin(),
-    ],
-  },
-  devServer: {
-    static: {
-      directory: path.resolve(__dirname, 'public/okcalendar@1.0.0/dist'),
-    },
-    compress: true,
-  },
-
 };

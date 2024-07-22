@@ -1,5 +1,5 @@
 /* okcalendar.js */
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 const arabicToDevanagari = (number) => {
   const arabicDigits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -37,7 +37,7 @@ const getNepaliTime = () => {
 const todayCache = {
   data: {},
 };
-const fetchTodayData = async(url)=> {
+const fetchTodayData = async (url) => {
   if (todayCache[url]) {
     return todayCache[url];
   }
@@ -45,22 +45,35 @@ const fetchTodayData = async(url)=> {
   const todaydata = await response.json();
   todayCache[url] = todaydata;
   return todaydata;
-}
+};
+
+// Cache object
+const holidaysCache = {
+  data: {},
+};
+const fetchHolidaysData = async (url) => {
+  if (holidaysCache[url]) {
+    return holidaysCache[url];
+  }
+  const response = await fetch(url);
+  const holidaysdata = await response.json();
+  holidaysCache[url] = holidaysdata;
+  return holidaysdata;
+};
 
 let todayYear;
 let todayMonth;
 
-
-const handlePrev = async (container, widgetType,data, width) => {
+const handlePrev = async (container, widgetType, data, width) => {
   todayYear = todayMonth === 1 ? todayYear - 1 : todayYear;
   todayMonth = todayMonth === 1 ? 12 : todayMonth - 1;
-  await fetchDataAndRender(container, widgetType,data, width);
+  await fetchDataAndRender(container, widgetType, data, width);
 };
 
-const handleNext = async (container, widgetType,data, width) => {
+const handleNext = async (container, widgetType, data, width) => {
   todayYear = todayMonth === 12 ? todayYear + 1 : todayYear;
   todayMonth = todayMonth === 12 ? 1 : todayMonth + 1;
-  await fetchDataAndRender(container, widgetType,data, width);
+  await fetchDataAndRender(container, widgetType, data, width);
 };
 
 const getPreviousMonth = (year, month) => {
@@ -83,26 +96,313 @@ const getNextMonth = (year, month) => {
   return { nextYear, nextMonth };
 };
 
+export const getRemainingDays = (selectedDateString) => {
+  if (!selectedDateString) return 0; // Add a check for undefined or null
 
-const handlePopup =()=>{
+  // Parse the selected date string
+  const selectedDate = new Date(selectedDateString);
+
+  // Check if the selected date is valid
+  if (isNaN(selectedDate.getTime())) {
+    console.error("Invalid date format. Please provide a date in ISO format.");
+    return 0;
+  }
+
+  // Get the current date and set it to the start of the day
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+
+  // Set the selected date to the start of the day
+  selectedDate.setHours(0, 0, 0, 0);
+
+  // Calculate the difference in days
+  const differenceInTime = selectedDate.getTime() - currentDate.getTime();
+  const remainingDays = differenceInTime / (1000 * 3600 * 24);
+
+  return Math.ceil(remainingDays);
+};
+
+export const nepaliDaysRemaining = (remainingDays) => {
+  if (remainingDays === -1) {
+    return `हिजो`;
+  } else if (remainingDays === 0) {
+    return `आज`;
+  } else if (remainingDays === 1) {
+    return `भोलि`;
+  } else if (remainingDays > 0 && remainingDays !== 1) {
+    if (remainingDays > 365) {
+      const yearsLeft = Math.floor(remainingDays / 365);
+      const remainingDaysAfterYears = remainingDays % 365;
+      if (remainingDaysAfterYears > 30) {
+        const monthsLeft = Math.floor(remainingDaysAfterYears / 30);
+        return `
+                      ${arabicToDevanagari(yearsLeft)}
+                      वर्ष 
+                      ${arabicToDevanagari(monthsLeft)}
+                      महिना बाँकी
+                  `;
+      } else {
+        return `
+                      ${arabicToDevanagari(yearsLeft)}
+                      वर्ष 
+                      ${arabicToDevanagari(remainingDaysAfterYears)}
+                      दिन बाँकी
+                  `;
+      }
+    } else if (remainingDays > 30) {
+      const monthsLeft = Math.floor(remainingDays / 30);
+      return `
+                  ${arabicToDevanagari(monthsLeft)}
+                  महिना बाँकी
+              `;
+    } else {
+      return `
+                  ${arabicToDevanagari(remainingDays)}
+                  दिन बाँकी
+             `;
+    }
+  } else if (remainingDays < 0) {
+    // Handling past dates
+    if (Math.abs(remainingDays) > 365) {
+      const yearsAgo = Math.floor(Math.abs(remainingDays) / 365);
+      const remainingDaysAfterYears = Math.abs(remainingDays) % 365;
+      if (remainingDaysAfterYears > 30) {
+        const monthsAgo = Math.floor(remainingDaysAfterYears / 30);
+        return `
+                      ${arabicToDevanagari(yearsAgo)}
+                      वर्ष पहिले 
+                      ${arabicToDevanagari(monthsAgo)}
+                      महिना पहिले
+                  `;
+      } else {
+        return `
+                      ${arabicToDevanagari(yearsAgo)}
+                      वर्ष पहिले 
+                      ${arabicToDevanagari(remainingDaysAfterYears)}
+                      दिन पहिले
+                 `;
+      }
+    } else if (Math.abs(remainingDays) > 30) {
+      const monthsAgo = Math.floor(Math.abs(remainingDays) / 30);
+      return `
+                  ${arabicToDevanagari(monthsAgo)}
+                  महिना पहिले
+              `;
+    } else {
+      return `
+                  ${arabicToDevanagari(Math.abs(remainingDays))}
+                  दिन पहिले
+              `;
+    }
+  } else {
+    return null;
+  }
+};
+
+const customPopup = () =>
+  `
+  <div class="ok-custom__popup popup__small">
+      <div class="ok-overlay"></div>
+      <div class="ok-custom__popup__model">
+        <div class="ok-close__popup">
+          <svg stroke="currentColor" fill="#555" stroke-width="0" viewBox="0 0 352 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+        </div>
+
+        <div class="ok-custom__popup__content">
+        </div>
+      </div>
+      </div>
+    </div>
+  `;
+
+const popUp = (data) => {
+  const remainingDays = getRemainingDays(String(data?.ad_full_date_en));
+  return `
+        <div class="ok-month-popup">
+          <div class="ok-day-circle">
+            ${data.bs_date_np}
+          </div>
+
+          <div class="ok-month-info">
+            <div class="ok-day-date">
+            ${data.bs_month_np} ${data.bs_year_np}
+              <span class="ok-day-current">
+                ${data.day_np}
+              </span>
+            </div>
+
+            <div class="ok-day-site-info">
+              ${data.tithi_title_np} 
+              
+                ${data.sunrise_np ? 
+                  `<span class="ok-day-sunrise">
+                    सूर्योदय ${data.sunrise_np}
+                  </span>
+                  `
+                  : "" 
+                }
+
+                 ${data.sunset_np ? 
+                  `<span class="ok-day-sunrise">
+                    सूर्यास्त ${data.sunset_np}
+                  </span>
+                  `
+                  : "" 
+                }
+            </div>
+
+            <div>
+              <span class="ok-badge ok-eng-font">
+                ${data.ad_month_en} ${data.ad_date_en}, ${data.ad_year_en}, ${data.day_en}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ok-month-event">
+          <h2 class="ok-title">
+           कार्यक्रमहरू
+
+           ${
+             data.events.length > 0
+               ? `
+              <span class="ok-badge ${
+                data.day_en === "Saturday" ||
+                data?.events[0].is_public_holiday === true
+                  ? "ok-event-holiday"
+                  : ""
+              }">
+              ${nepaliDaysRemaining(remainingDays)}
+              </span>
+              `
+               : ``
+           }
+          
+          </h2>
+
+          ${
+            data.events.length > 0
+              ? `
+            <div class="ok-month-event-list">
+              <ul>
+              ${data.events
+                .map(
+                  (event, i) =>
+                    `
+                <li key=${event.id} class="${
+                      event?.is_public_holiday === true ||
+                      data.day_en === "Saturday"
+                        ? "danger"
+                        : ""
+                    }">${event.event_title_np}</li>
+                `
+                )
+                .join("")}
+              </ul>
+            </div>
+            `
+              : `
+            <div class="ok-null-data">
+            कुनै कार्यक्रमहरू उपलब्ध छैनन्
+            </div>
+            `
+          }
+
+        </div>
+
+        <div class="ok-month-panchanga">
+          <h2 class="ok-title">
+            पञ्चाङ्ग
+          </h2>
+
+          <div class="ok-month-panchanga-list">
+            <div class="ok-wrapper">
+              <div>
+                तारिख:
+              </div>
+              <div class="ok-eng-font">
+              ${data.ad_month_en} ${data.ad_date_en}, ${data.ad_year_en}
+              </div>
+            </div>
+
+            <div class="ok-wrapper">
+              <div>
+                पक्ष:
+              </div>
+              <div>
+              ${data.pakshya_np || "-"}
+              </div>
+            </div>
+
+            <div class="ok-wrapper">
+              <div>
+                सूर्योदय:
+              </div>
+              <div>
+              ${data.sunrise_np || "-"} 
+              </div>
+            </div>
+
+            <div class="ok-wrapper">
+              <div>
+                सूर्यास्त:
+              </div>
+              <div>
+              ${data.sunset_np || "-"} 
+              </div>
+            </div>
+
+            <div class="ok-wrapper">
+              <div>
+                ऋतु:
+              </div>
+              <div>
+              ${data.ritu_np || "-"}
+              </div>
+            </div>
+
+            <div class="ok-wrapper">
+              <div>
+                तिथी:
+              </div>
+              <div>
+              ${data.tithi_title_np || data.tithi_end_time_np  ?  
+                data.tithi_title_np + data.tithi_end_time_np + "बजेसम्म" :
+              "-"
+              }
+              </div>
+            </div>
+          </div>
+      
+  `;
+};
+
+const handlePopup = (data) => {
   const OKbody = document.querySelector("body");
   const OKpopUp = document.querySelector(".ok-custom__popup");
-  OKbody.classList.add("ok-popup-open")
-  OKpopUp.classList.add("active")
-}
+  const OKpopUpContent = document.querySelector(".ok-custom__popup__content");
 
-const handleClose =()=>{
+  if (OKbody) {
+    OKbody.classList.add("ok-popup-open");
+  }
+  if (OKpopUp) {
+    OKpopUpContent.innerHTML = popUp(data);
+    OKpopUp.classList.add("active");
+  }
+};
+
+const handleClose = () => {
   const OKbody = document.querySelector("body");
   const OKpopUp = document.querySelector(".ok-custom__popup");
-  OKbody.classList.remove("ok-popup-open")
-  OKpopUp.classList.remove("active")
-}
+  OKbody.classList.remove("ok-popup-open");
+  OKpopUp.classList.remove("active");
+};
 
 // Cache object
 const cache = {
   calendarData: {},
   previousData: {},
-  nextMonthData: {}
+  nextMonthData: {},
 };
 
 const fetchData = async (url) => {
@@ -115,6 +415,29 @@ const fetchData = async (url) => {
   return data;
 };
 
+const getPreviousArray =(calendarData,previousData)=>{
+  const dayCode = calendarData.data[0].day_code_en;
+  const dayEn = calendarData.data[0].day_en;
+  const prevDayCode = dayCode - 1;
+
+  let prevArray;
+  if (dayEn === "Sunday") {
+    prevArray = [];
+  } else {
+    prevArray = previousData.data.slice(-prevDayCode);
+  }
+
+  return prevArray;
+}
+
+const getNextArray =(calendarData,nextMonthData)=>{
+  const lastDayCode =
+    calendarData.data[calendarData.data.length - 1].day_code_en;
+  const nextDayCode = 7 - lastDayCode;
+  const nextArray = nextMonthData.data.slice(0, nextDayCode);
+
+  return nextArray;
+}
 
 const noData = () =>
   `<div class="ok-calendar">
@@ -124,9 +447,9 @@ const noData = () =>
       </div>
     </div>`;
 
-const okDay = (data, width) => (
+const okDay = (data, width) =>
   `<div class="ok-calendar">
-  <a href="${process.env.NEXT_PUBLIC_LIVE_URL}" target="_blank">
+  <a class="ok-card-target" href="${process.env.NEXT_PUBLIC_LIVE_URL}" target="_blank">
     <div class="ok-card ok-day">
       <div class="ok-day-circle">
         ${data.data.bs_date_np}
@@ -137,8 +460,8 @@ const okDay = (data, width) => (
           ${data.data.bs_year_np}
           <span class="ok-eng-font ok-badge">
             ${data.data.ad_month_en} ${data.data.ad_date_en}, ${
-data.data.ad_year_en
-}
+    data.data.ad_year_en
+  }
           </span>
 
           <span class="ok-day-season ok-badge">
@@ -164,19 +487,18 @@ data.data.ad_year_en
       </div>
     </div>
   </a>
-</div>`
-)
+</div>`;
 
 const okDaySmall = (data, width) =>
   `<div class="ok-calendar">
-        <a href="${process.env.NEXT_PUBLIC_LIVE_URL}" target="_blank">
+        <a class="ok-card-target" href="${process.env.NEXT_PUBLIC_LIVE_URL}" target="_blank">
           <div class="ok-card ok-day-sm">
-            <div class="ok-day-sm-date">
+            <div class="ok-card-date-info">
               ${data.data.bs_date_np}
               <span>${data.data.day_np.replace("वार", "")}</span>
             </div>
             <div class="ok-flex">
-              <div class="ok-day-sm-info">
+              <div class="ok-card-info">
                 <div class="ok-flex ok-flex-m">
                   ${data.data?.events
                     .slice(0, 1)
@@ -185,11 +507,11 @@ const okDaySmall = (data, width) =>
                         `<p><span key=${index}>${event?.event_title_np} -</span></p>`
                     )
                     .join("")}
-                  <p class="ok-day-sm-tithi">
+                  <p class="ok-card-tithi">
                     ${data.data?.tithi?.tithi_title_np}
                   </p>
                 </div>
-                <div class='ok-day-sm-flex'>
+                <div class='ok-card-flex'>
                   <span>
                     ${data.data.bs_month_np} ${data.data.bs_date_np}, ${
     data.data.bs_year_np
@@ -204,7 +526,7 @@ const okDaySmall = (data, width) =>
                 </div>
               </div>
               <div>
-                <span class="ok-day-sm-event">
+                <span class="ok-card-event">
                   ${
                     data.data?.events?.length - 1 >= 1
                       ? `+ ${data.data?.events?.length - 1}`
@@ -217,139 +539,162 @@ const okDaySmall = (data, width) =>
         </a>
       </div>`;
 
-const okMonthSmall = (calendarData, previousData, nextMonthData, todayData, width) => {
+const okMonth = (
+  calendarData,
+  previousData,
+  nextMonthData,
+  todayData,
+  width
+) => {
   const daysOfWeek = ["आ", "सो", "मं", "बु", "बि", "शु", "श"];
-  
-  const popUp = ()=> (
-    `
-    <div class="ok-custom__popup popup__small">
-      <div class="ok-overlay"></div>
-      <div class="ok-custom__popup__model">
-        <div class="ok-close__popup">
-          <svg stroke="currentColor" fill="#555" stroke-width="0" viewBox="0 0 352 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+
+  const disabledHtml = (data, index) =>
+    `<div 
+          class="ok-month-col ok-disabled-month"
+          key=${index}
+          >
+      ${data.bs_date_np}
+
+      <span class="ok-eng-font">
+        ${data.ad_date_en}
+      </span>
+      </div>`;
+
+  const prevArray = getPreviousArray(calendarData, previousData)
+
+  const previousHTML = `${prevArray
+    .map((data, index) => disabledHtml(data, index))
+    .join("")}`;
+
+  const nextArray = getNextArray(calendarData, nextMonthData)
+
+  const nextHTML = `${nextArray
+    .map((data, index) => disabledHtml(data, index))
+    .join("")}`;
+
+  let calendarHTML = `<div class="ok-calendar">
+        <div class="ok-card ok-month">
+
+        <div class="ok-month-header">
+          
+          <div class="ok-month-prev ok-month-jump-between">
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg>
+          </div>
+
+          <div class="ok-month-selected">
+            <span>
+            ${calendarData.data[0].bs_month_np}
+            </span>
+
+            <span class="ok-eng-font">
+            ${calendarData.currentMonthsAd[0].slice(0, 3)}
+            <small>/</small>
+            ${calendarData.currentMonthsAd[1].slice(0, 3)}
+            ${" "}
+            ${calendarData.currentMonthsAd[2]}
+            </span>
+          </div>
+
+          <div class="ok-month-next ok-month-jump-between">
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+          </div>
         </div>
-        <div class="ok-custom__popup__content">
-          <div class="ok-month-popup">
-            <div class="ok-day-circle">
-              २५
-            </div>
 
-            <div class="ok-month-info">
-              <div class="ok-day-date">
-                असार २०८१
-                <span class="ok-day-current">
-                  मंगलवार 
-                </span>
-              </div>
+        <div class="ok-month-sm-body">
+          ${daysOfWeek
+            .map(
+              (days, index) =>
+                `<div class="ok-month-days" key=${index}>
+                  ${days}
+              </div>`
+            )
+            .join("")}
 
-              <div class="ok-day-site-info">
-                तृतीया 
-                <span class="ok-day-sunrise">
-                  सूर्योदय ०५ः१६ 
-                </span>
-                <span class="ok-day-sunrise">
-                  सूर्यास्त १९ः०५ 
-                </span>
-              </div>
+          ${previousHTML}
 
-              <div>
-                <span class="ok-badge">
-                  July 9, 2024, Wednesday
-                </span>
-              </div>
-            </div>
-          </div>
+          ${calendarData.data
+            .map(
+              (data, index) =>
+                `<div 
+              class="ok-month-col ok-month-col-click
+              ${
+                data.bs_date_np === todayData.bs_date_np &&
+                data.bs_month_code_en === todayData.bs_month_code_en &&
+                data.bs_year_en === todayData.bs_year_en &&
+                data.day_en === "Saturday"
+                  ? "ok-month-today-holiday"
+                  : data.bs_date_np === todayData.bs_date_np &&
+                    data.bs_month_code_en === todayData.bs_month_code_en &&
+                    data.bs_year_en === todayData.bs_year_en &&
+                    data?.events[0]?.is_public_holiday === true
+                  ? "ok-month-today-holiday"
+                  : data.bs_date_np === todayData.bs_date_np &&
+                    data.bs_month_code_en === todayData.bs_month_code_en &&
+                    data.bs_year_en === todayData.bs_year_en
+                  ? "ok-month-today"
+                  : data.day_en === "Saturday"
+                  ? "ok-month-holiday"
+                  : data?.events[0]?.is_public_holiday === true
+                  ? "ok-month-holiday"
+                  : ""
+              }
+              "
+                key=${index}
 
-          <div class="ok-month-event">
-            <h2 class="ok-title">
-             कार्यक्रमहरू
+                data-bs_date_np="${data.bs_date_np}"
+                data-bs_month_np="${data.bs_month_np}"
+                data-bs_year_np="${data.bs_year_np}"
+                data-day_np="${data.day_np}"
+                data-tithi_title_np="${data?.tithi ? data?.tithi?.tithi_title_np : ""}"
+                data-sunrise_np="${data?.panchanga ? data?.panchanga.sunrise_np : ""}"
+                data-sunset_np="${data?.panchanga ? data?.panchanga.sunset_np : ""}"
+                data-ad_month_en="${data.ad_month_en}"
+                data-ad_date_en="${data.ad_date_en}"
+                data-ad_year_en="${data.ad_year_en}"
+                data-day_en="${data.day_en}"
+                data-ad_full_date_en="${data.ad_full_date_en}"
+                data-events='${JSON.stringify(data.events)}'
+                data-pakshya_np="${data?.panchanga ? data?.panchanga?.pakshya_np : ""}"
+                data-ritu_np="${data?.panchanga ? data?.panchanga?.ritu_np : ""}"
+                data-tithi_end_time_np="${data?.tithi ? data?.tithi?.tithi_end_time_np : ""}"
+                >
+            ${data.bs_date_np}
 
-             <span class="ok-badge">
-              २१ दिन पहिले
-             </span>
-            </h2>
+            ${
+              data?.events.length > 0
+                ? `<span class="ok-month-sm-event"></span>`
+                : ""
+            }
 
-            <div class="ok-month-event-list">
-              <ul>
-                <li class="">निर्जला एकादशी व्रत</li>
-                <li class="">तुलसीको दल राख्ने</li>
-              </ul>
-            </div>
+            <span class="ok-eng-font">
+            ${data.ad_date_en}
+            </span>
+            </div>`
+            )
+            .join("")}
 
-            <div class="ok-no-data">
-              कुनै कार्यक्रमहरू उपलब्ध छैनन्
-            </div>
-          </div>
-
-          <div class="ok-month-panchanga">
-            <h2 class="ok-title">
-              पञ्चाङ्ग
-            </h2>
-
-            <div class="ok-month-panchanga-list">
-              <div class="ok-wrapper">
-                <div>
-                  तारिख:
-                </div>
-                <div class="ok-eng-font">
-                  June 17, 2024
-                </div>
-              </div>
-
-              <div class="ok-wrapper">
-                <div>
-                  पक्ष:
-                </div>
-                <div>
-                  ज्येष्ठ शुक्लपक्ष
-                </div>
-              </div>
-
-              <div class="ok-wrapper">
-                <div>
-                  सूर्योदय:
-                </div>
-                <div>
-                 ०५:१०
-                </div>
-              </div>
-
-              <div class="ok-wrapper">
-                <div>
-                  सूर्यास्त:
-                </div>
-                <div>
-                  १९:००
-                </div>
-              </div>
-
-              <div class="ok-wrapper">
-                <div>
-                  ऋतु:
-                </div>
-                <div>
-                  ग्रीष्म
-                </div>
-              </div>
-
-              <div class="ok-wrapper">
-                <div>
-                  तिथी:
-                </div>
-                <div>
-                  एकादशी २८:४५ बजेसम्म
-                </div>
-              </div>
-            </div>
-          </div>
+          ${nextHTML}
         </div>
       </div>
     </div>
-    `
-  )
 
-  const disabledHtml=(data, index)=>
-      `<div 
+    ${customPopup()}
+    `;
+
+  return calendarHTML;
+};      
+
+const okMonthSmall = (
+  calendarData,
+  previousData,
+  nextMonthData,
+  todayData,
+  width
+) => {
+  const daysOfWeek = ["आ", "सो", "मं", "बु", "बि", "शु", "श"];
+
+  const disabledHtml = (data, index) =>
+    `<div 
           class="ok-month-sm-col ok-disabled-month"
           key=${index}
           >
@@ -358,36 +703,19 @@ const okMonthSmall = (calendarData, previousData, nextMonthData, todayData, widt
       <span class="ok-eng-font">
         ${data.ad_date_en}
       </span>
-      </div>`
+      </div>`;
 
-  const dayCode = calendarData.data[0].day_code_en;
-  const dayEn = calendarData.data[0].day_en;
-  const prevDayCode = dayCode - 1;
-
-  let prevArray;
-  if(dayEn === "Sunday"){
-    prevArray = []
-  }else{
-    prevArray = previousData.data.slice(-prevDayCode);
-  }
+ const prevArray = getPreviousArray(calendarData, previousData)
 
   const previousHTML = `${prevArray
-    .map(
-      (data, index) =>
-        disabledHtml(data, index)
-    )
-    .join("")}`
+    .map((data, index) => disabledHtml(data, index))
+    .join("")}`;
 
-    const lastDayCode = calendarData.data[calendarData.data.length - 1].day_code_en;
-    const nextDayCode = 7 - lastDayCode;
-    const nextArray = nextMonthData.data.slice(0 , nextDayCode);
+  const nextArray = getNextArray(calendarData, nextMonthData)
 
-    const nextHTML = `${nextArray
-      .map(
-        (data, index) =>
-          disabledHtml(data, index)
-      )
-      .join("")}`
+  const nextHTML = `${nextArray
+    .map((data, index) => disabledHtml(data, index))
+    .join("")}`;
 
   let calendarHTML = `<div class="ok-calendar">
         <div class="ok-card ok-month-sm" style="width: ${width};">
@@ -419,70 +747,175 @@ const okMonthSmall = (calendarData, previousData, nextMonthData, todayData, widt
         </div>
 
         <div class="ok-month-sm-body">
-          ${daysOfWeek.map((days, index)=> 
-            `<div class="ok-month-sm-days" key=${index}>
+          ${daysOfWeek
+            .map(
+              (days, index) =>
+                `<div class="ok-month-sm-days" key=${index}>
                   ${days}
               </div>`
-          ).join("")}
+            )
+            .join("")}
 
           ${previousHTML}
 
           ${calendarData.data
-          .map(
-            (data, index) =>
-              `<div 
-            onClick="popUp()"
-              class="ok-month-sm-col 
-              ${data.bs_date_np === todayData.bs_date_np && data.bs_month_code_en === todayData.bs_month_code_en && data.bs_year_en === todayData.bs_year_en
-                && data.day_en === "Saturday"
-                ? "ok-month-today-holiday"
-                :
+            .map(
+              (data, index) =>
+                `<div 
+              class="ok-month-sm-col ok-month-col-click
+              ${
                 data.bs_date_np === todayData.bs_date_np &&
-                  data.bs_month_code_en === todayData.bs_month_code_en && data.bs_year_en === todayData.bs_year_en
-                  && data?.events[0]?.is_public_holiday === true
+                data.bs_month_code_en === todayData.bs_month_code_en &&
+                data.bs_year_en === todayData.bs_year_en &&
+                data.day_en === "Saturday"
                   ? "ok-month-today-holiday"
-                  :
-                  data.bs_date_np === todayData.bs_date_np &&
-                    data.bs_month_code_en === todayData.bs_month_code_en && data.bs_year_en === todayData.bs_year_en
-                    ? "ok-month-today"
-                    : data.day_en === "Saturday"
-                      ? "ok-month-holiday"
-                      : data?.events[0]?.is_public_holiday === true ?
-                        "ok-month-holiday" :
-                        ""}
+                  : data.bs_date_np === todayData.bs_date_np &&
+                    data.bs_month_code_en === todayData.bs_month_code_en &&
+                    data.bs_year_en === todayData.bs_year_en &&
+                    data?.events[0]?.is_public_holiday === true
+                  ? "ok-month-today-holiday"
+                  : data.bs_date_np === todayData.bs_date_np &&
+                    data.bs_month_code_en === todayData.bs_month_code_en &&
+                    data.bs_year_en === todayData.bs_year_en
+                  ? "ok-month-today"
+                  : data.day_en === "Saturday"
+                  ? "ok-month-holiday"
+                  : data?.events[0]?.is_public_holiday === true
+                  ? "ok-month-holiday"
+                  : ""
+              }
               "
                 key=${index}
+
+                data-bs_date_np="${data.bs_date_np}"
+                data-bs_month_np="${data.bs_month_np}"
+                data-bs_year_np="${data.bs_year_np}"
+                data-day_np="${data.day_np}"
+                data-tithi_title_np="${data?.tithi ? data?.tithi?.tithi_title_np : ""}"
+                data-sunrise_np="${data?.panchanga ? data?.panchanga.sunrise_np : ""}"
+                data-sunset_np="${data?.panchanga ? data?.panchanga.sunset_np : ""}"
+                data-ad_month_en="${data.ad_month_en}"
+                data-ad_date_en="${data.ad_date_en}"
+                data-ad_year_en="${data.ad_year_en}"
+                data-day_en="${data.day_en}"
+                data-ad_full_date_en="${data.ad_full_date_en}"
+                data-events='${JSON.stringify(data.events)}'
+                data-pakshya_np="${data?.panchanga ? data?.panchanga?.pakshya_np : ""}"
+                data-ritu_np="${data?.panchanga ? data?.panchanga?.ritu_np : ""}"
+                data-tithi_end_time_np="${data?.tithi ? data?.tithi?.tithi_end_time_np : ""}"
                 >
             ${data.bs_date_np}
 
-            ${data?.events.length > 0 ? `<span class="ok-month-sm-event"></span>` : ""}
+            ${
+              data?.events.length > 0
+                ? `<span class="ok-month-sm-event"></span>`
+                : ""
+            }
 
             <span class="ok-eng-font">
             ${data.ad_date_en}
             </span>
             </div>`
-          )
-          .join("")}
+            )
+            .join("")}
 
           ${nextHTML}
         </div>
-        
       </div>
     </div>
 
-    ${popUp()}
-    `
+    ${customPopup()}
+    `;
 
   return calendarHTML;
-}
+};
+
+const okHolidays = (data, width) => {
+  let newData = [];
+
+  data.forEach((event) => {
+    const existingEventIndex = newData.findIndex(
+      (item) => item.date.bs_concat_date_en === event.date.bs_concat_date_en
+    );
+    if (existingEventIndex !== -1) {
+      // If the event's date matches an existing event in newData, append the event_title_np to the existing one
+      newData[
+        existingEventIndex
+      ].event_title_np += ` | ${event.event_title_np}`;
+    } else {
+      // If the event's date doesn't match any existing event in newData, push the event into newData
+      newData.push({
+        ...event,
+        event_title_np: event.event_title_np,
+      });
+    }
+  });
+
+  return `<div class="ok-calendar">
+      <div class="ok-card ok-holidays">
+        <h2>आगामी बिदाहरु</h2>
+       ${
+         newData.length > 0
+           ? `
+        ${newData
+          .map((data) => {
+            const remainingDays = getRemainingDays(
+              String(data?.date?.ad_concat_date_en)
+            );
+            return `
+              <div key=${data.id} class="ok-holidays-wrapper">
+      
+        <div class="ok-card-date-info">
+          ${data.date.bs_date_np}
+          <span>${data.date.day_np.replace("वार", "")}</span>
+        </div>
+        <div class="ok-flex">
+          <div class="ok-card-info ok-card-holiday-info">
+            <div class="ok-flex ok-flex-m">
+              
+              <p class="ok-card-holiday">
+                ${data.event_title_np}
+              </p>
+            </div>
+            <div class='ok-card-flex'>
+              <span>
+                ${data.date.bs_month_np} ${data.date.bs_date_np}, ${
+              data.date.bs_year_np
+            }
+              </span>
+              -
+              <span class='ok-eng-font'>
+                ${data.date.ad_month_en.slice(0, 3)} ${data.date.ad_date_en}, ${
+              data.date.ad_year_en
+            }
+              </span>
+            </div>
+          </div>
+          <div>
+            <span class="ok-card-day-remaining">
+            ${nepaliDaysRemaining(remainingDays)}
+            </span>
+          </div>
+          </div>
+        </div>
+              `;
+          })
+          .join("")}
+        `
+           : ``
+       }
+        
+      </div>
+    </div>`;
+};
 
 async function renderDayWidget(container, widgetType, width) {
   const data = await fetchTodayData(`${baseUrl}/api/v1/calendar/today`);
 
   if (data) {
     if (widgetType === "ok-day") {
-      container.innerHTML = okDay(data,width)
-    }else if (widgetType === "ok-day-sm") {
+      container.innerHTML = okDay(data, width);
+    } else if (widgetType === "ok-day-sm") {
       container.innerHTML = okDaySmall(data, width);
     }
   } else {
@@ -494,53 +927,109 @@ async function renderMonthWidget(container, widgetType, width) {
   const data = await fetchTodayData(`${baseUrl}/api/v1/calendar/today`);
 
   if (data) {
-    
-   todayYear = parseInt(data.data.bs_year_en);
-   todayMonth = parseInt(data.data.bs_month_code_en);
+    todayYear = parseInt(data.data.bs_year_en);
+    todayMonth = parseInt(data.data.bs_month_code_en);
 
-   await fetchDataAndRender(container, widgetType, data.data, width);
+    await fetchDataAndRender(container, widgetType, data.data, width);
+  } else {
+    container.innerHTML = noData();
+  }
+}
+
+async function renderHolidaysWidget(container, widgetType, width) {
+  const data = await fetchHolidaysData(
+    `${baseUrl}/api/v1/calendar/upcoming?type=holidays`
+  );
+
+  if (data) {
+    if (widgetType === "ok-holidays") {
+      container.innerHTML = okHolidays(data.data, width);
+    }
   } else {
     container.innerHTML = noData();
   }
 }
 
 const attachEventListeners = (container, widgetType, data, width) => {
-  const prevButton = document.querySelector('.ok-month-prev');
-  const nextButton = document.querySelector('.ok-month-next');
+  const prevButton = document.querySelector(".ok-month-prev");
+  const nextButton = document.querySelector(".ok-month-next");
 
-  const popButtons = document.querySelectorAll('.ok-month-sm-col');
-  const closeButton = document.querySelector('.ok-close__popup');
-  const closeOverlay = document.querySelector('.ok-overlay');
+  const popButtons = document.querySelectorAll(".ok-month-col-click");
+  const closeButton = document.querySelector(".ok-close__popup");
+  const closeOverlay = document.querySelector(".ok-overlay");
 
   if (prevButton && nextButton) {
-    prevButton.addEventListener('click', () => handlePrev(container, widgetType, data, width));
-    nextButton.addEventListener('click', () => handleNext(container, widgetType, data, width));
+    prevButton.addEventListener("click", () =>
+      handlePrev(container, widgetType, data, width)
+    );
+    nextButton.addEventListener("click", () =>
+      handleNext(container, widgetType, data, width)
+    );
   }
 
-  popButtons.forEach(button => {
-    button.addEventListener('click', () => handlePopup());
+  popButtons.forEach((item) => {
+    item.addEventListener("click", (event) => {
+      const data = {
+        bs_date_np: item.getAttribute("data-bs_date_np"),
+        bs_month_np: item.getAttribute("data-bs_month_np"),
+        bs_year_np: item.getAttribute("data-bs_year_np"),
+        day_np: item.getAttribute("data-day_np"),
+        tithi_title_np: item.getAttribute("data-tithi_title_np"),
+        sunrise_np: item.getAttribute("data-sunrise_np"),
+        sunset_np: item.getAttribute("data-sunset_np"),
+        ad_month_en: item.getAttribute("data-ad_month_en"),
+        ad_date_en: item.getAttribute("data-ad_date_en"),
+        ad_year_en: item.getAttribute("data-ad_year_en"),
+        day_en: item.getAttribute("data-day_en"),
+        ad_full_date_en: item.getAttribute("data-ad_full_date_en"),
+        events: JSON.parse(item.getAttribute("data-events")),
+        pakshya_np: item.getAttribute("data-pakshya_np"),
+        ritu_np: item.getAttribute("data-ritu_np"),
+        tithi_end_time_np: item.getAttribute("data-tithi_end_time_np"),
+      };
+      handlePopup(data);
+    });
   });
 
-  if(closeButton && closeOverlay){
-    closeButton.addEventListener('click', ()=> handleClose())
-    closeOverlay.addEventListener('click', ()=> handleClose())
+  if (closeButton && closeOverlay) {
+    closeButton.addEventListener("click", () => handleClose());
+    closeOverlay.addEventListener("click", () => handleClose());
   }
-  
 };
 
 const fetchDataAndRender = async (container, widgetType, data, width) => {
-  const { previousYear, previousMonth } = getPreviousMonth(todayYear, todayMonth);
+  const { previousYear, previousMonth } = getPreviousMonth(
+    todayYear,
+    todayMonth
+  );
   const { nextYear, nextMonth } = getNextMonth(todayYear, todayMonth);
 
   const [calendarData, previousData, nextMonthData] = await Promise.all([
     fetchData(`${baseUrl}/api/v1/calendar/month/bs/${todayYear}/${todayMonth}`),
-    fetchData(`${baseUrl}/api/v1/calendar/month/bs/${previousYear}/${previousMonth}`),
+    fetchData(
+      `${baseUrl}/api/v1/calendar/month/bs/${previousYear}/${previousMonth}`
+    ),
     fetchData(`${baseUrl}/api/v1/calendar/month/bs/${nextYear}/${nextMonth}`),
   ]);
 
   if (calendarData && previousData && nextMonthData) {
-    if (widgetType === "ok-month-sm") {
-      container.innerHTML = okMonthSmall(calendarData, previousData, nextMonthData, data, width);
+    if (widgetType === "ok-month") {
+      container.innerHTML = okMonth(
+        calendarData,
+        previousData,
+        nextMonthData,
+        data,
+        width
+      );
+      attachEventListeners(container, widgetType, data, width);
+    }else if (widgetType === "ok-month-sm") {
+      container.innerHTML = okMonthSmall(
+        calendarData,
+        previousData,
+        nextMonthData,
+        data,
+        width
+      );
       attachEventListeners(container, widgetType, data, width);
     }
   } else {
@@ -550,27 +1039,16 @@ const fetchDataAndRender = async (container, widgetType, data, width) => {
 
 // Function to initialize the widget based on data-widget attribute
 function initWidgets() {
-  const okDayContainers = document.querySelectorAll('[data-widget="ok-day"]');
-  const okDaySmallContainers = document.querySelectorAll(
-    '[data-widget="ok-day-sm"]'
-  );
-  const okMonthSmallContainers = document.querySelectorAll(
-    '[data-widget="ok-month-sm"]'
-  );
-
-  okDayContainers.forEach((container) => {
-    const width = container.getAttribute('style') || '300px'; 
-    renderDayWidget(container, "ok-day", width);
-  });
-
-  okDaySmallContainers.forEach((container) => {
-    const width = container.getAttribute('style') || '300px';
-    renderDayWidget(container, "ok-day-sm",width);
-  });
-
-  okMonthSmallContainers.forEach((container) => {
-    const width = container.getAttribute('style') || '300px';
-    renderMonthWidget(container, "ok-month-sm",width);
+  document.querySelectorAll('[data-widget]').forEach((container) => {
+    const widgetType = container.getAttribute('data-widget');
+    const width = container.style.width || '300px'; // Fallback to 300px if width not set
+    if (widgetType === 'ok-day' || widgetType === 'ok-day-sm') {
+      renderDayWidget(container, widgetType, width);
+    } else if (widgetType === 'ok-month' || widgetType === 'ok-month-sm') {
+      renderMonthWidget(container, widgetType, width);
+    }else if (widgetType === 'ok-holidays') {
+      renderHolidaysWidget(container, widgetType, width);
+    }
   });
 }
 
@@ -579,33 +1057,25 @@ initWidgets();
 
 // Initialize a MutationObserver to watch for changes in the DOM
 document.addEventListener("DOMContentLoaded", () => {
-  const observer = new MutationObserver(() => {
-    document.querySelectorAll('[data-widget="ok-day"], [data-widget="ok-day-sm"]').forEach(container => {
-      const widgetType = container.getAttribute('data-widget');
-      const width = container.getAttribute('style') || '300px';
-      renderDayWidget(container, widgetType, width);
-    });
-
-    document.querySelectorAll('[data-widget="ok-month"], [data-widget="ok-month-sm"]').forEach(container => {
-      const widgetType = container.getAttribute('data-widget');
-      const width = container.getAttribute('style') || '300px';
-      renderMonthWidget(container, widgetType, width);
-    });
+  const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType === 1 && node.hasAttribute('data-widget')) {
+            const widgetType = node.getAttribute('data-widget');
+            const width = node.style.width || '300px';
+            if (widgetType === 'ok-day' || widgetType === 'ok-day-sm') {
+              renderDayWidget(node, widgetType, width);
+            } else if (widgetType === 'ok-month' || widgetType === 'ok-month-sm') {
+              renderMonthWidget(node, widgetType, width);
+            }else if (widgetType === 'ok-holidays') {
+              renderHolidaysWidget(container, widgetType, width);
+            }
+          }
+        });
+      }
+    }
   });
 
   observer.observe(document.body, { childList: true, subtree: true });
-
-  // Initial rendering for existing elements
-  document.querySelectorAll('[data-widget="ok-day"], [data-widget="ok-day-sm"]').forEach(container => {
-    const widgetType = container.getAttribute('data-widget');
-    const width = container.getAttribute('style') || '300px';
-    renderDayWidget(container, widgetType, width);
-  });
-
-  document.querySelectorAll('[data-widget="ok-month"], [data-widget="ok-month-sm"]').forEach(container => {
-    const widgetType = container.getAttribute('data-widget');
-    const width = container.getAttribute('style') || '300px';
-    renderMonthWidget(container, widgetType, width);
-  });
 });
-

@@ -1162,6 +1162,7 @@ img {
   align-items: flex-start;
   margin-bottom: 5px !important;
   grid-template-columns: 45px 1fr;
+  position: relative;
 }
 .ok-card-day-event:last-child {
   margin-bottom: 0 !important;
@@ -1194,6 +1195,7 @@ img {
   line-height: 20px;
   font-weight: 600;
   margin-bottom: 2px;
+  padding-right: 80px;
 }
 .ok-card-day-event .ok-event-day-info a {
   color: inherit;
@@ -1219,6 +1221,9 @@ img {
   border-radius: 28px;
   white-space: nowrap;
   align-self: flex-start;
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }
 
 .ok-card-day-event.is-holiday .ok-event-day-info {
@@ -6939,19 +6944,32 @@ button:disabled {
 .ok-widget-box .ok-widget-box-header h2.active::after {
   width: 100%;
 }
+.ok-widget-box .ok-widget-box-header .ok-copied-txt {
+  padding-right: 20px;
+}
 .ok-widget-box .ok-copy-code > div {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding-right: 18px;
+  background: #e6e6e6;
+  padding: 5px;
+  border-radius: 5px;
+}
+.ok-widget-box .ok-copy-code > div svg {
+  font-size: 12px;
 }
 .ok-widget-box .ok-copied {
-  cursor: default;
+  pointer-events: none;
+  height: 22px;
+  width: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .ok-widget-box .ok-widget-box-preview {
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: 20px;
   min-height: 205px;
 }
 .ok-widget-box .ok-widget-box-markup {
@@ -6965,6 +6983,61 @@ button:disabled {
 }
 .ok-widget-box .ok-tag-data {
   color: #f0506e;
+}
+
+.activeStyle {
+  display: flex !important;
+}
+
+.inactiveStyle {
+  display: none !important;
+}
+
+.ok-markup-head {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+}
+
+.ok-widget-comment {
+  color: #969896;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.ok-markup-wrapper:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.ok-copy-code:hover > div {
+  background: #d1d1d1;
+}
+
+.ok-copy-code:hover + code {
+  background: #2e75ff;
+  color: #fff;
+}
+
+.ok-copy-code:hover + code span {
+  color: #fff;
+}
+
+.ok-open {
+  overflow-y: hidden;
+}
+
+.ok-panchanga-share {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ok-mobile-patro .ok-card-day-event .ok-event-day-info p {
+  padding-right: 0;
 }
 
 @media (max-width: 1200px) {
@@ -7404,15 +7477,4 @@ button:disabled {
     font-size: 15px;
     margin-top: 3px;
   }
-}
-.ok-open {
-  overflow-y: hidden;
-}
-
-.ok-panchanga-share {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-  align-items: center;
 }/*# sourceMappingURL=style.css.map */
