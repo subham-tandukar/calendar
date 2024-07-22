@@ -37,16 +37,16 @@ const Panels = () => {
           <Link href="/holiday">
             {
               siteSetting?.holiday_card_bg_image ? (
-                <img src={siteSetting?.holiday_card_bg_image} alt={siteSetting?.holiday_card_title_np || "बिदाहरु"} />
+                <img  width={200} height={200}  src={siteSetting?.holiday_card_bg_image} alt={siteSetting?.holiday_card_title_np || "बिदाहरु"} />
               ) : (
-                <Image width={200} height={200} src="/img/holiday-bg.png" alt={siteSetting?.holiday_card_title_np || "बिदाहरु"} />
+                <Image  width={200} height={200} src="/img/holiday-bg.png" alt={siteSetting?.holiday_card_title_np || "बिदाहरु"} />
               )
             }
           </Link>
           <div className="ok-quick-access-tools-content">
             {
               siteSetting?.holiday_igscard_icon ? (
-                <img src={siteSetting?.holiday_igscard_icon} alt={siteSetting?.holiday_card_title_np || "बिदाहरु"} />
+                <img width={43} height={43} src={siteSetting?.holiday_igscard_icon} alt={siteSetting?.holiday_card_title_np || "बिदाहरु"} />
               ) : (
                 <Image width={43} height={43} src="/img/holiday-icon.png" alt={siteSetting?.holiday_card_title_np || "बिदाहरु"} />
               )
@@ -58,7 +58,7 @@ const Panels = () => {
           <Link href="/sahit">
             {
               siteSetting?.sahit_card_bg_image ? (
-                <img src={siteSetting?.sahit_card_bg_image} alt={siteSetting?.sahit_card_title_np || "साइत"} />
+                <img  width={200} height={200}  src={siteSetting?.sahit_card_bg_image} alt={siteSetting?.sahit_card_title_np || "साइत"} />
               ) : (
                 <Image width={200} height={200} src="/img/sait-bg.png" alt={siteSetting?.sahit_card_title_np || "साइत"} />
               )
@@ -68,7 +68,7 @@ const Panels = () => {
           <div className="ok-quick-access-tools-content">
             {
               siteSetting?.sahit_card_icon ? (
-                <img src={siteSetting?.sahit_card_icon} alt={siteSetting?.sahit_card_title_np || "साइत"} />
+                <img width={43} height={43} src={siteSetting?.sahit_card_icon} alt={siteSetting?.sahit_card_title_np || "साइत"} />
               ) : (
                 <Image width={43} height={43} src="/img/sait-icon.png" alt={siteSetting?.sahit_card_title_np || "साइत"} />
               )
@@ -80,7 +80,7 @@ const Panels = () => {
           <Link href="/panchanga">
             {
               siteSetting?.panchanga_card_bg_image ? (
-                <img src={siteSetting?.panchanga_card_bg_image} alt={siteSetting?.panchanga_card_title_np || "पञ्चाङ्ग"} />
+                <img  width={200} height={200}  src={siteSetting?.panchanga_card_bg_image} alt={siteSetting?.panchanga_card_title_np || "पञ्चाङ्ग"} />
               ) : (
                 <Image width={200} height={200} src="/img/panchanga-bg.png" alt={siteSetting?.panchanga_card_title_np || "पञ्चाङ्ग"} />
 
@@ -90,7 +90,7 @@ const Panels = () => {
           <div className="ok-quick-access-tools-content">
             {
               siteSetting?.panchanga_card_icon ? (
-                <img src={siteSetting?.panchanga_card_icon} alt={siteSetting?.panchanga_card_title_np || "पञ्चाङ्ग"} />
+                <img width={43} height={43} src={siteSetting?.panchanga_card_icon} alt={siteSetting?.panchanga_card_title_np || "पञ्चाङ्ग"} />
               ) : (
                 <Image width={43} height={43} src="/img/panchanga-icon.png" alt={siteSetting?.panchanga_card_title_np || "पञ्चाङ्ग"} />
 
@@ -103,7 +103,7 @@ const Panels = () => {
           <Link href="/rashifal">
             {
               siteSetting?.rashifal_card_bg_image ? (
-                <img src={siteSetting?.rashifal_card_bg_image} alt={siteSetting?.rashifal_card_title_np || "राशिफल"} />
+                <img width={400} height={124} src={siteSetting?.rashifal_card_bg_image} alt={siteSetting?.rashifal_card_title_np || "राशिफल"} />
               ) : (
                 <Image width={400} height={124} src="/img/rashifal-bg.png" alt={siteSetting?.rashifal_card_title_np || "राशिफल"} />
               )
@@ -114,7 +114,7 @@ const Panels = () => {
               <div className='ok-panel-rashifal-icon'>
                 {
                   siteSetting?.rashifal_card_icon ? (
-                    <img src={siteSetting?.rashifal_card_icon} alt={siteSetting?.rashifal_card_title_np || "राशिफल"} />
+                    <img width={43} height={43} src={siteSetting?.rashifal_card_icon} alt={siteSetting?.rashifal_card_title_np || "राशिफल"} />
                   ) : (
                     <Image width={43} height={43} src="/img/rashifal-icon.png" alt={siteSetting?.rashifal_card_title_np || "राशिफल"} />
                   )

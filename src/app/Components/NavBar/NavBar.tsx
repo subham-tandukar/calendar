@@ -123,6 +123,7 @@ const NavBar = ({ currentdate }) => {
                 siteSetting.main_logo && (
 
                   <img
+                    width={200} height={30}
                     src={siteSetting.main_logo}
                     alt="Ok Logo"
                   />

@@ -86,10 +86,7 @@ export default async function Layout({
           <RootContextProvider>
 
             <NavBar currentdate={data} />
-            <div className="ok-main">
-
             {children}
-            </div>
             <Footer />
           </RootContextProvider>
         </AuthContextProvider>

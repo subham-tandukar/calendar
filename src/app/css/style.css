@@ -7479,6 +7479,12 @@ button:disabled {
   }
 }/*# sourceMappingURL=style.css.map */
 
-.ok-main{
-  min-height: 100vh;
+
+.ok-main-loader{
+  height: calc(100vh - 150px);
+  align-items: center;
+}
+.ok-site-header .ok-site-logo img {
+	width: 200px;
+  height: auto;
 }
