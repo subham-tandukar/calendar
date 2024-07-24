@@ -40,7 +40,7 @@ const Footer = () => {
                     siteSetting.logo_footer && (
 
                       <img
-                      width={240} height={30}
+                        width={240} height={30}
                         src={siteSetting.logo_footer}
                         alt="Ok Logo"
                       />

@@ -201,7 +201,22 @@ export const nepaliDaysRemaining = (remainingDays) => {
 
 const customPopup = () =>
   `
-  <div class="ok-custom__popup popup__small">
+  <div class="ok-custom__popup popup__small ok-month-popup">
+      <div class="ok-overlay"></div>
+      <div class="ok-custom__popup__model">
+        <div class="ok-close__popup">
+          <svg stroke="currentColor" fill="#555" stroke-width="0" viewBox="0 0 352 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
+        </div>
+
+        <div class="ok-custom__popup__content">
+        </div>
+      </div>
+      </div>
+    </div>
+  `;
+const customPopupSm = () =>
+  `
+  <div class="ok-custom__popup popup__small ok-month-sm-popup">
       <div class="ok-overlay"></div>
       <div class="ok-custom__popup__model">
         <div class="ok-close__popup">
@@ -379,8 +394,21 @@ const popUp = (data) => {
 
 const handlePopup = (data) => {
   const OKbody = document.querySelector("body");
-  const OKpopUp = document.querySelector(".ok-custom__popup");
-  const OKpopUpContent = document.querySelector(".ok-custom__popup__content");
+  const OKpopUp = document.querySelector(".ok-month-popup");
+  const OKpopUpContent = document.querySelector(".ok-month-popup .ok-custom__popup__content");
+
+  if (OKbody) {
+    OKbody.classList.add("ok-popup-open");
+  }
+  if (OKpopUp) {
+    OKpopUpContent.innerHTML = popUp(data);
+    OKpopUp.classList.add("active");
+  }
+};
+const handlePopupSm = (data) => {
+  const OKbody = document.querySelector("body");
+  const OKpopUp = document.querySelector(".ok-month-sm-popup");
+  const OKpopUpContent = document.querySelector(".ok-month-sm-popup .ok-custom__popup__content");
 
   if (OKbody) {
     OKbody.classList.add("ok-popup-open");
@@ -393,7 +421,13 @@ const handlePopup = (data) => {
 
 const handleClose = () => {
   const OKbody = document.querySelector("body");
-  const OKpopUp = document.querySelector(".ok-custom__popup");
+  const OKpopUp = document.querySelector(".ok-month-popup");
+  OKbody.classList.remove("ok-popup-open");
+  OKpopUp.classList.remove("active");
+};
+const handleCloseSm = () => {
+  const OKbody = document.querySelector("body");
+  const OKpopUp = document.querySelector(".ok-month-sm-popup");
   OKbody.classList.remove("ok-popup-open");
   OKpopUp.classList.remove("active");
 };
@@ -546,18 +580,55 @@ const okMonth = (
   todayData,
   width
 ) => {
-  const daysOfWeek = ["आ", "सो", "मं", "बु", "बि", "शु", "श"];
+  const daysOfWeek =[
+    {
+      nep:"आइतवार",
+      eng:"SUN"
+    },
+    {
+      nep:"सोमवार",
+      eng:"MON"
+    },
+    {
+      nep:"मंगलवार",
+      eng:"TUE"
+    },
+    {
+      nep:"बुधवार",
+      eng:"WED"
+    },
+    {
+      nep:"बिहीवार",
+      eng:"THU"
+    },
+    {
+      nep:"शुक्रवार",
+      eng:"FRI"
+    },
+    {
+      nep:"शनिवार",
+      eng:"SAT"
+    },
+  ]
 
   const disabledHtml = (data, index) =>
-    `<div 
+      `<div 
           class="ok-month-col ok-disabled-month"
           key=${index}
           >
-      ${data.bs_date_np}
+          <div class="ok-month-col-date">
+            <span>${data.bs_date_np}</span>
+          </div>
 
-      <span class="ok-eng-font">
-        ${data.ad_date_en}
-      </span>
+          <div class="ok-month-col-left">
+            <span>${data?.tithi?.tithi_title_np || ""}</span>
+          </div>
+
+          <div class="ok-month-col-right">
+            <span class="ok-eng-font">
+              ${data.ad_date_en}
+            </span>
+          </div>
       </div>`;
 
   const prevArray = getPreviousArray(calendarData, previousData)
@@ -605,8 +676,9 @@ const okMonth = (
             .map(
               (days, index) =>
                 `<div class="ok-month-days" key=${index}>
-                  ${days}
-              </div>`
+                  ${days.nep}
+                  <span>${days.eng}</span>
+                </div>`
             )
             .join("")}
 
@@ -658,17 +730,49 @@ const okMonth = (
                 data-ritu_np="${data?.panchanga ? data?.panchanga?.ritu_np : ""}"
                 data-tithi_end_time_np="${data?.tithi ? data?.tithi?.tithi_end_time_np : ""}"
                 >
-            ${data.bs_date_np}
 
-            ${
-              data?.events.length > 0
-                ? `<span class="ok-month-sm-event"></span>`
-                : ""
-            }
+                ${
+                  data?.events.length > 0
+                    ? `
+                    ${data?.events.slice(0,1).map((evt, i) =>
+                      `
+                        <span class="ok-month-col-top">
+                          ${evt?.event_title_np}
+                        </span>
+                      `
+                    ).join("")}
+                    `
+                    : ""
+                }
 
-            <span class="ok-eng-font">
-            ${data.ad_date_en}
-            </span>
+                <div class="ok-month-col-date">
+                  <span>${data.bs_date_np}</span>
+
+                  ${
+                  data?.events.length - 1 >= 1
+                    ? `
+                    <span class="ok-month-col-event ok-for-desktop">
+                    + ${data?.events.length - 1}
+                    </span>
+
+                    <span class="ok-month-col-event ok-for-mobile">
+                      <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M224 512c35.32 0 63.97-28.65 63.97-64H160.03c0 35.35 28.65 64 63.97 64zm215.39-149.71c-19.32-20.76-55.47-51.99-55.47-154.29 0-77.7-54.48-139.9-127.94-155.16V32c0-17.67-14.32-32-31.98-32s-31.98 14.33-31.98 32v20.84C118.56 68.1 64.08 130.3 64.08 208c0 102.3-36.15 133.53-55.47 154.29-6 6.45-8.66 14.16-8.61 21.71.11 16.4 12.98 32 32.1 32h383.8c19.12 0 32-15.6 32.1-32 .05-7.55-2.61-15.27-8.61-21.71z"></path></svg>
+                    </span>
+                    `
+                    : ""
+                  }
+                  
+                </div>
+
+                <div class="ok-month-col-left">
+                  <span>${data?.tithi?.tithi_title_np || ""}</span>
+                </div>
+
+                <div class="ok-month-col-right">
+                  <span class="ok-eng-font">
+                    ${data.ad_date_en}
+                  </span>
+                </div>
             </div>`
             )
             .join("")}
@@ -762,7 +866,7 @@ const okMonthSmall = (
             .map(
               (data, index) =>
                 `<div 
-              class="ok-month-sm-col ok-month-col-click
+              class="ok-month-sm-col ok-month-sm-col-click
               ${
                 data.bs_date_np === todayData.bs_date_np &&
                 data.bs_month_code_en === todayData.bs_month_code_en &&
@@ -824,7 +928,7 @@ const okMonthSmall = (
       </div>
     </div>
 
-    ${customPopup()}
+    ${customPopupSm()}
     `;
 
   return calendarHTML;
@@ -955,8 +1059,11 @@ const attachEventListeners = (container, widgetType, data, width) => {
   const nextButton = document.querySelector(".ok-month-next");
 
   const popButtons = document.querySelectorAll(".ok-month-col-click");
-  const closeButton = document.querySelector(".ok-close__popup");
-  const closeOverlay = document.querySelector(".ok-overlay");
+  const popButtonsSm = document.querySelectorAll(".ok-month-sm-col-click");
+  const closeButton = document.querySelector(".ok-month-popup .ok-close__popup");
+  const closeButtonSm = document.querySelector(".ok-month-sm-popup .ok-close__popup");
+  const closeOverlay = document.querySelector(".ok-month-popup .ok-overlay");
+  const closeOverlaySm = document.querySelector(".ok-month-sm-popup .ok-overlay");
 
   if (prevButton && nextButton) {
     prevButton.addEventListener("click", () =>
@@ -967,33 +1074,47 @@ const attachEventListeners = (container, widgetType, data, width) => {
     );
   }
 
+  const popupData =(item)=>{
+    const data = {
+      bs_date_np: item.getAttribute("data-bs_date_np"),
+      bs_month_np: item.getAttribute("data-bs_month_np"),
+      bs_year_np: item.getAttribute("data-bs_year_np"),
+      day_np: item.getAttribute("data-day_np"),
+      tithi_title_np: item.getAttribute("data-tithi_title_np"),
+      sunrise_np: item.getAttribute("data-sunrise_np"),
+      sunset_np: item.getAttribute("data-sunset_np"),
+      ad_month_en: item.getAttribute("data-ad_month_en"),
+      ad_date_en: item.getAttribute("data-ad_date_en"),
+      ad_year_en: item.getAttribute("data-ad_year_en"),
+      day_en: item.getAttribute("data-day_en"),
+      ad_full_date_en: item.getAttribute("data-ad_full_date_en"),
+      events: JSON.parse(item.getAttribute("data-events")),
+      pakshya_np: item.getAttribute("data-pakshya_np"),
+      ritu_np: item.getAttribute("data-ritu_np"),
+      tithi_end_time_np: item.getAttribute("data-tithi_end_time_np"),
+    };
+    return data
+  }
+
   popButtons.forEach((item) => {
     item.addEventListener("click", (event) => {
-      const data = {
-        bs_date_np: item.getAttribute("data-bs_date_np"),
-        bs_month_np: item.getAttribute("data-bs_month_np"),
-        bs_year_np: item.getAttribute("data-bs_year_np"),
-        day_np: item.getAttribute("data-day_np"),
-        tithi_title_np: item.getAttribute("data-tithi_title_np"),
-        sunrise_np: item.getAttribute("data-sunrise_np"),
-        sunset_np: item.getAttribute("data-sunset_np"),
-        ad_month_en: item.getAttribute("data-ad_month_en"),
-        ad_date_en: item.getAttribute("data-ad_date_en"),
-        ad_year_en: item.getAttribute("data-ad_year_en"),
-        day_en: item.getAttribute("data-day_en"),
-        ad_full_date_en: item.getAttribute("data-ad_full_date_en"),
-        events: JSON.parse(item.getAttribute("data-events")),
-        pakshya_np: item.getAttribute("data-pakshya_np"),
-        ritu_np: item.getAttribute("data-ritu_np"),
-        tithi_end_time_np: item.getAttribute("data-tithi_end_time_np"),
-      };
-      handlePopup(data);
+      handlePopup(popupData(item));
+    });
+  });
+
+  popButtonsSm.forEach((item) => {
+    item.addEventListener("click", (event) => {
+      handlePopupSm(popupData(item));
     });
   });
 
   if (closeButton && closeOverlay) {
     closeButton.addEventListener("click", () => handleClose());
     closeOverlay.addEventListener("click", () => handleClose());
+  }
+  if (closeButtonSm && closeOverlaySm) {
+    closeButtonSm.addEventListener("click", () => handleCloseSm());
+    closeOverlaySm.addEventListener("click", () => handleCloseSm());
   }
 };
 

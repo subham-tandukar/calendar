@@ -1018,6 +1018,7 @@ img {
     text-decoration: none;
     img {
       width: 200px;
+      height: auto;
     }
     .ok-current-time {
       text-align: right;
@@ -1473,6 +1474,7 @@ img {
     display: block;
     > img {
       width: 240px;
+      height: auto;
     }
   }
 }
@@ -7016,7 +7018,7 @@ button:disabled {
         width: 100%;
       }
     }
-    .ok-copied-txt{
+    .ok-copied-txt {
       padding-right: 20px;
     }
   }
@@ -7027,8 +7029,8 @@ button:disabled {
     background: #e6e6e6;
     padding: 5px;
     border-radius: 5px;
-  
-    svg{
+
+    svg {
       font-size: 12px;
     }
   }
@@ -7084,7 +7086,7 @@ button:disabled {
   margin-bottom: 20px;
 }
 
-.ok-copy-code:hover > div{
+.ok-copy-code:hover > div {
   background: #d1d1d1;
 }
 
@@ -7109,7 +7111,17 @@ button:disabled {
 }
 
 .ok-mobile-patro .ok-card-day-event .ok-event-day-info p {
-	padding-right: 0;
+  padding-right: 0;
+}
+
+.ok-main-loader {
+  height: calc(100vh - 150px);
+  align-items: center;
+}
+
+div[data-widget="ok-month"],
+div[data-widget="ok-month"] .ok-calendar {
+  width: 100%;
 }
 
 @media (max-width: 1200px) {
@@ -7533,6 +7545,13 @@ button:disabled {
   }
   .ok-my-reminders .ok-no-data {
     margin-bottom: 0;
+  }
+  .ok-widget-box .ok-widget-box-preview {
+    min-height: 100%;
+    padding: 15px;
+  }
+  .activeStyle {
+    width: 100%;
   }
 }
 

@@ -997,6 +997,7 @@ img {
 }
 .ok-site-header .ok-site-logo img {
   width: 200px;
+  height: auto;
 }
 .ok-site-header .ok-site-logo .ok-current-time {
   text-align: right;
@@ -1448,6 +1449,7 @@ img {
 }
 .ok-foot-logo > a > img {
   width: 240px;
+  height: auto;
 }
 
 .ok-director-info {
@@ -7040,6 +7042,16 @@ button:disabled {
   padding-right: 0;
 }
 
+.ok-main-loader {
+  height: calc(100vh - 150px);
+  align-items: center;
+}
+
+div[data-widget=ok-month],
+div[data-widget=ok-month] .ok-calendar {
+  width: 100%;
+}
+
 @media (max-width: 1200px) {
   .ok-home-widget {
     flex-wrap: wrap;
@@ -7430,6 +7442,13 @@ button:disabled {
   .ok-my-reminders .ok-no-data {
     margin-bottom: 0;
   }
+  .ok-widget-box .ok-widget-box-preview {
+    min-height: 100%;
+    padding: 15px;
+  }
+  .activeStyle {
+    width: 100%;
+  }
 }
 @media (max-width: 480px) {
   .ok-filter-border {
@@ -7478,15 +7497,3 @@ button:disabled {
     margin-top: 3px;
   }
 }/*# sourceMappingURL=style.css.map */
-
-
-.ok-main-loader{
-  height: calc(100vh - 150px);
-  align-items: center;
-}
-.ok-site-header .ok-site-logo img {
-  height: auto;
-}
-.ok-foot-logo > a > img{
-  height: auto;
-}
